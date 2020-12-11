@@ -3,7 +3,11 @@ package meow.monad
 import meow.syntax.{CanFMapOpInstances, FunctorOpInstances, MonadOpInstances, MonadReturnOpInstances}
 import meow.{Applicative, Functor, Monad}
 
-case class State[S, +A](runState: S => (A, S))
+case class State[S, +A](runState: S => (A, S)) {
+  def exec(s: S): S = runState(s)._2
+  def eval(s: S): A = runState(s)._1
+  val run: S => (A, S) = runState
+}
 
 trait StateFunctions
   extends MonadOpInstances with MonadReturnOpInstances with StateInstances with FunctorOpInstances {
