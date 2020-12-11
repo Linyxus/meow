@@ -15,7 +15,7 @@ trait StateFunctions
   extends MonadOpInstances with MonadReturnOpInstances with StateInstances with FunctorOpInstances {
   def get[S]: State[S, S] = State { s => (s, s) }
   def set[S](s: S): State[S, Unit] = State { _ => ((), s) }
-  def modify[S](func: S => S): State[S, Unit] = get[S] <#> func >>= set
+  def modify[S](func: S => S): State[S, Unit] = get[S] <%| func >>= set
 }
 
 trait StateInstances extends CanFMapOpInstances {
