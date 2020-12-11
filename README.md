@@ -67,3 +67,27 @@ val app: State[Int, Unit] =
   mult <%%> get[Int] <*> get >>= set
 app.exec(-5)
 ```
+
+## Parser Monad (Parser Combinator)
+
+See [Examples](src/main/scala/meow/example/ParserExample.scala).
+
+```scala
+  sealed trait UrlScheme
+case object Http extends UrlScheme
+case object Https extends UrlScheme
+case object Ftp extends UrlScheme
+case object File extends UrlScheme
+
+case class Url(scheme: UrlScheme, term: List[String])
+val pScheme: Parser[UrlScheme] = choice(
+  string("https") <*| Https,
+  string("http") <*| Http,
+  string("ftp") <*| Ftp,
+  string("file") <*| File,
+) <* string("://")
+val pTerm: Parser[String] = some(satisfy(_.isLetter)) <%| (_ mkString "")
+val pUrl: Parser[Url] = Url <%%> pScheme <*> pTerm.sepBy1(char('.'))
+println(pUrl parseOnly "https://example.com.cn")
+// => Some(Url(Https,List(example, com, cn)))
+```
