@@ -73,7 +73,7 @@ app.exec(-5)
 See [Examples](src/main/scala/meow/example/ParserExample.scala).
 
 ```scala
-  sealed trait UrlScheme
+sealed trait UrlScheme
 case object Http extends UrlScheme
 case object Https extends UrlScheme
 case object Ftp extends UrlScheme
