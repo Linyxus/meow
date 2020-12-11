@@ -10,12 +10,17 @@ object StateExample extends App with StateInstances with StateFunctions {
 
   val app: State[Int, Int] =
     set(1) >> modify(mul2) >> modify(plus10) >> get
-  println(app.runState(1))
+  println(app.run(1))
 
   val app2: State[Int, Int] =
     for (
       x <- get[Int]; _ <- modify((s: Int) => s + x);
       y <- get[Int]
     ) yield y
-  println(app2.runState(100))
+  println(app2.run(100))
+
+  val mult: (Int, Int) => Int = (x, y) => x * y
+  val app3: State[Int, Unit] =
+    mult <%%> get[Int] <*> get >>= set
+  println(app3.exec(-5))
 }
