@@ -9,6 +9,8 @@ case class State[S, +A](runState: S => (A, S)) {
   val run: S => (A, S) = runState
 }
 
+object State extends StateFunctions with StateInstances
+
 trait StateFunctions
   extends MonadOpInstances with MonadReturnOpInstances with StateInstances with FunctorOpInstances {
   def get[S]: State[S, S] = State { s => (s, s) }

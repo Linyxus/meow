@@ -3,8 +3,9 @@ package meow.example
 import meow._
 import Meow._
 import monad._
+import State._
 
-object StateExample extends App with StateInstances with StateFunctions {
+object StateExample extends App {
   def mul2(x: Int): Int = x * 2
   def plus10(x: Int): Int = x + 10
 
