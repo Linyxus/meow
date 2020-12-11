@@ -56,3 +56,14 @@ Currying a 2-ary function implicitly when mapping:
 def add(x: Int, y: Int): Int = x + y
 add _ <%%> List(1, 2) <*> List(3, 4)
 ```
+
+## State Monad
+
+See [Examples](src/main/scala/meow/example/StateExample.scala).
+
+```scala
+val mult: (Int, Int) => Int = (x, y) => x * y
+val app: State[Int, Unit] =
+  mult <%%> get[Int] <*> get >>= set
+app.exec(-5)
+```
