@@ -23,6 +23,11 @@ trait AlternativeFunctions
 
   def many[F[_]: Alternative, A](v: F[A])(implicit applicative: Applicative[F], functor: Functor[F]): F[List[A]] =
     some(v) <|> List.empty[A].pure[F]
+
+  def asum[F[_]: Alternative, A](vs: List[F[A]]): F[A] = vs match {
+    case x :: xs => x <|> asum(xs)
+    case Nil => mempty[F, A]
+  }
 }
 
 trait AlternativeInstances {
