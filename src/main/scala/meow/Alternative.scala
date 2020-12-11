@@ -3,7 +3,7 @@ package meow
 import meow.syntax.{AlternativeOpInstances, ApplicativePureOpInstances, ApplicativeOpInstances, CanFMapOpInstances}
 
 trait Alternative[F[_]] {
-  def or[A](fx: F[A], fy: F[A]): F[A]
+  def or[A](fx: F[A], fy: => F[A]): F[A]
   def mempty[A]: F[A]
 }
 
@@ -17,7 +17,8 @@ trait AlternativeFunctions
 
   def some[F[_]: Alternative, A](v: F[A])(implicit applicative: Applicative[F], functor: Functor[F]): F[List[A]] = {
     val cons: A => List[A] => List[A] = x => xs => x :: xs
-    cons <%> v <*> many(v)
+    lazy val rem: F[List[A]] = many(v)
+    cons <%> v <*> rem
   }
 
   def many[F[_]: Alternative, A](v: F[A])(implicit applicative: Applicative[F], functor: Functor[F]): F[List[A]] =
@@ -26,12 +27,12 @@ trait AlternativeFunctions
 
 trait AlternativeInstances {
   implicit val listIsAlternative: Alternative[List] = new Alternative[List] {
-    override def or[A](fx: List[A], fy: List[A]): List[A] = fx ++ fy
+    override def or[A](fx: List[A], fy: => List[A]): List[A] = fx ++ fy
     override def mempty[A]: List[A] = Nil
   }
 
   implicit val optionIsAlternative: Alternative[Option] = new Alternative[Option] {
-    override def or[A](fx: Option[A], fy: Option[A]): Option[A] =
+    override def or[A](fx: Option[A], fy: => Option[A]): Option[A] =
       if (fx.isDefined) fx else fy
     override def mempty[A]: Option[A] = None
   }
