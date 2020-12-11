@@ -14,7 +14,7 @@ object StateExample extends App with StateInstances with StateFunctions {
 
   val app2: State[Int, Int] =
     for (
-      x <- get[Int]; _ <- modify[Int](s => s + x);
+      x <- get[Int]; _ <- modify((s: Int) => s + x);
       y <- get[Int]
     ) yield y
   println(app2.runState(100))
