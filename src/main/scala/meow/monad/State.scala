@@ -29,7 +29,7 @@ trait StateInstances extends CanFMapOpInstances {
   implicit def stateIsApplicative[S]: Applicative[({type P[A] = State[S, A]})#P] = new Applicative[({type P[A] = State[S, A]})#P] {
     override def pureOf[A](x: A): State[S, A] = State { s => (x, s) }
 
-    override def ap[A, B](mfunc: State[S, A => B], ma: State[S, A]): State[S, B] = State { s1 =>
+    override def ap[A, B](mfunc: State[S, A => B], ma: => State[S, A]): State[S, B] = State { s1 =>
       val (f, s2) = mfunc.runState(s1)
       val (a, s3) = ma.runState(s2)
       (f(a), s3)
