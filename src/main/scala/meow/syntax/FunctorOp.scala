@@ -5,6 +5,8 @@ import meow.{CurryFunctions, Functor}
 trait FunctorOp[F[_], A] {
   val functor: Functor[F]
   def <#>[B](func: A => B): F[B]
+  def map[B](func: A => B): F[B] = this.<#>(func)
+  def foreach[B](func: A => B): Unit = this map func
 }
 
 trait CanFMapOp[A, B] {

@@ -6,6 +6,10 @@ trait MonadOp[F[_], A] {
   val monad: Monad[F]
 
   def >>=[B](fab: A => F[B]): F[B]
+
+  def >>[B](mb: F[B]): F[B] = this.>>= { _ => mb }
+
+  def flatMap[B](fab: A => F[B]): F[B] = this.>>=(fab)
 }
 
 trait MonadReturnOp[A] {
