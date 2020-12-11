@@ -12,6 +12,10 @@ trait MonadOp[F[_], A] {
   def flatMap[B](fab: A => F[B]): F[B] = this.>>=(fab)
 }
 
+trait MonadExtraOp[F[_], A] {
+  def <*[B](mb: F[B])(implicit applicative: Applicative[F]): F[A]
+}
+
 trait MonadReturnOp[A] {
   def mreturn[F[_]: Monad](implicit applicative: Applicative[F]): F[A]
 }
@@ -32,3 +36,11 @@ trait MonadReturnOpInstances {
     }
   }
 }
+
+trait MonadExtraOpInstances extends MonadOpInstances with MonadReturnOpInstances {
+  implicit def toMonadExtraOp[F[_]: Monad, A](ma: F[A]): MonadExtraOp[F, A] = new MonadExtraOp[F, A] {
+    override def <*[B](mb: F[B])(implicit applicative: Applicative[F]): F[A] =
+      ma >>= { a => mb >> a.mreturn[F] }
+  }
+}
+
