@@ -8,4 +8,5 @@ object Meow extends CurryFunctions
   with CanFMapOpInstances with CanFMap2OpInstances
   with ApplicativePureOpInstances
   with MonadReturnOpInstances
+  with AlternativeFunctions
 
