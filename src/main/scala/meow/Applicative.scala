@@ -20,7 +20,7 @@ trait ApplicativeInstances {
       for (func <- mfunc; a <- ma) yield func(a)
   }
 
-  implicit def eitherIsApplicative[E]: Applicative[({type L[A] = Either[E, A]})#L] = new Applicative[({type L[A] = Either[E, A]})#L] {
+  implicit def eitherIsApplicative[E]: Applicative[Either[E, *]] = new Applicative[Either[E, *]] {
     override def pureOf[A](x: A): Either[E, A] = Right(x)
 
     override def ap[A, B](mfunc: Either[E, A => B], ma: => Either[E, A]): Either[E, B] =

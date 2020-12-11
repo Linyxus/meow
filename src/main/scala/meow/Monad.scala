@@ -15,7 +15,7 @@ trait MonadInstances {
     override def andThen[A, B](ma: Option[A], fab: A => Option[B]): Option[B] = ma flatMap fab
   }
 
-  implicit def eitherIsMonad[E]: Monad[({type T[A] = Either[E, A]})#T] = new Monad[({type T[A] = Either[E, A]})#T] {
+  implicit def eitherIsMonad[E]: Monad[Either[E, *]] = new Monad[Either[E, *]] {
     override def andThen[A, B](ma: Either[E, A], fab: A => Either[E, B]): Either[E, B] = ma flatMap fab
   }
 }

@@ -16,6 +16,6 @@ object ApplicativeExample extends App {
   val m2: Option[Int] = 1.pure[Option]
   println(m2)
 
-  val m3: Either[Nothing, Int] = 1.pure[({type P[A] = Either[Nothing, A]})#P]
+  val m3: Either[Nothing, Int] = 1.pure[Either[Nothing, *]]
   println(m3)
 }

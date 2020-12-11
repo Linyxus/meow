@@ -13,7 +13,7 @@ trait FunctorInstances {
     override def fmap[A, B](func: A => B, fx: Option[A]): Option[B] = fx map func
   }
 
-  implicit def eitherIsFunctor[E]: Functor[({type P[B] = Either[E, B]})#P] = new Functor[({type P[B] = Either[E, B]})#P] {
+  implicit def eitherIsFunctor[E]: Functor[Either[E, *]] = new Functor[Either[E, *]] {
     override def fmap[A, B](func: A => B, fx: Either[E, A]): Either[E, B] = fx match {
       case Left(value) => Left(value)
       case Right(value) => Right(func(value))
