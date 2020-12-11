@@ -90,4 +90,6 @@ val pTerm: Parser[String] = some(satisfy(_.isLetter)) <%| (_ mkString "")
 val pUrl: Parser[Url] = Url <%%> pScheme <*> pTerm.sepBy1(char('.'))
 println(pUrl parseOnly "https://example.com.cn")
 // => Some(Url(Https,List(example, com, cn)))
+// or ...
+println("https://example.com.cn" ~~> pUrl)
 ```

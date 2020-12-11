@@ -43,4 +43,5 @@ object ParserExample extends App {
   println(pTerm parseOnly "abcd")
   val pUrl: Parser[Url] = Url <%%> pScheme <*> pTerm.sepBy1(char('.'))
   println(pUrl parseOnly "https://example.com.cn")
+  println("https://example.com.cn" ~~> pUrl)
 }

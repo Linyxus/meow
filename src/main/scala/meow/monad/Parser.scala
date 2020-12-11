@@ -2,6 +2,7 @@ package meow.monad
 
 import meow._
 import Meow._
+import meow.monad.syntax.CanParseOpInstance
 
 case class Parser[+A](runParser: String => List[(String, A)]) extends ParserFunctions {
   def parseOnly(source: String): Option[A] = runParser(source) filter { case (str, a) => str.isEmpty } match {
@@ -69,4 +70,4 @@ trait ParserInstances {
   }
 }
 
-object Parser extends ParserFunctions with ParserInstances
+object Parser extends ParserFunctions with ParserInstances with CanParseOpInstance
