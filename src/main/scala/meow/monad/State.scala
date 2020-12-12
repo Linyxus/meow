@@ -19,14 +19,16 @@ trait StateFunctions
 }
 
 trait StateInstances extends CanFMapOpInstances {
-  implicit def stateIsFunctor[S]: Functor[({type P[A] = State[S, A]})#P] = new Functor[({type P[A] = State[S, A]})#P] {
+  implicit def stateIsFunctor[S]: Functor[State[S, *]] = new Functor[State[S, *]] {
     override def fmap[A, B](func: A => B, fx: State[S, A]): State[S, B] = State { state =>
       val ret = fx.runState(state)
       (func(ret._1), ret._2)
     }
   }
 
-  implicit def stateIsApplicative[S]: Applicative[({type P[A] = State[S, A]})#P] = new Applicative[({type P[A] = State[S, A]})#P] {
+  implicit def stateIsApplicative[S]: Applicative[State[S, *]] = new Applicative[State[S, *]] {
+    override val functor: Functor[State[S, *]] = implicitly
+
     override def pureOf[A](x: A): State[S, A] = State { s => (x, s) }
 
     override def ap[A, B](mfunc: State[S, A => B], ma: => State[S, A]): State[S, B] = State { s1 =>
@@ -41,7 +43,8 @@ trait StateInstances extends CanFMapOpInstances {
     ma.runState(s2)
   }
 
-  implicit def stateIsMonad[S]: Monad[({type P[A] = State[S, A]})#P] = new Monad[({type P[A] = State[S, A]})#P] {
+  implicit def stateIsMonad[S]: Monad[State[S, *]] = new Monad[State[S, *]] {
+    override val applicative: Applicative[State[S, *]] = implicitly
     override def andThen[A, B](ma: State[S, A], fab: A => State[S, B]): State[S, B] = joinState(fab <%> ma)
   }
 }

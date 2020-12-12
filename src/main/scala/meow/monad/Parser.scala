@@ -44,6 +44,8 @@ trait ParserInstances {
   }
 
   implicit val parserIsApplicaitve: Applicative[Parser] = new Applicative[Parser] {
+    override val functor: Functor[Parser] = implicitly
+
     override def pureOf[A](x: A): Parser[A] = Parser { s => (s, x) :: Nil }
 
     override def ap[A, B](mfunc: Parser[A => B], ma: => Parser[A]): Parser[B] = Parser { s1 =>
@@ -58,6 +60,8 @@ trait ParserInstances {
   }
 
   implicit val parserIsMonad: Monad[Parser] = new Monad[Parser] {
+    override val applicative: Applicative[Parser] = implicitly
+
     override def andThen[A, B](ma: Parser[A], fab: A => Parser[B]): Parser[B] = joinParser(fab <%> ma)
   }
 

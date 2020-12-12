@@ -13,11 +13,11 @@ trait MonadOp[F[_], A] {
 }
 
 trait MonadExtraOp[F[_], A] {
-  def <*[B](mb: F[B])(implicit applicative: Applicative[F]): F[A]
+  def <*[B](mb: F[B]): F[A]
 }
 
 trait MonadReturnOp[A] {
-  def mreturn[F[_]: Monad](implicit applicative: Applicative[F]): F[A]
+  def mreturn[F[_]: Monad]: F[A]
 }
 
 trait MonadOpInstances {
@@ -30,7 +30,7 @@ trait MonadOpInstances {
 
 trait MonadReturnOpInstances {
   implicit def toMonadReturnOp[A](x: A): MonadReturnOp[A] = new MonadReturnOp[A] {
-    override def mreturn[F[_] : Monad](implicit applicative: Applicative[F]): F[A] = {
+    override def mreturn[F[_] : Monad]: F[A] = {
       val monad: Monad[F] = implicitly[Monad[F]]
       monad.returnOf(x)
     }
@@ -39,7 +39,7 @@ trait MonadReturnOpInstances {
 
 trait MonadExtraOpInstances extends MonadOpInstances with MonadReturnOpInstances {
   implicit def toMonadExtraOp[F[_]: Monad, A](ma: F[A]): MonadExtraOp[F, A] = new MonadExtraOp[F, A] {
-    override def <*[B](mb: F[B])(implicit applicative: Applicative[F]): F[A] =
+    override def <*[B](mb: F[B]): F[A] =
       ma >>= { a => mb >> a.mreturn[F] }
   }
 }

@@ -25,6 +25,8 @@ trait OptionTInstances {
 
   implicit def optionTIsApplicative[F[_]: Applicative]: Applicative[OptionT[F, *]] =
     new Applicative[OptionT[F, *]] {
+      override val functor: Functor[OptionT[F, *]] = optionTIsFunctor(implicitly[Applicative[F]].functor)
+
       override def pureOf[A](x: A): OptionT[F, A] = OptionT(x.pure[Option].pure[F])
 
       override def ap[A, B](mfunc: OptionT[F, A => B], ma: =>OptionT[F, A]): OptionT[F, B] =
@@ -36,6 +38,8 @@ trait OptionTInstances {
 
   implicit def optionTIsMonad[F[_]: Monad](implicit applicative: Applicative[F]): Monad[OptionT[F, *]] =
     new Monad[OptionT[F, *]] {
+      override val applicative: Applicative[OptionT[F, *]] = optionTIsApplicative(implicitly[Monad[F]].applicative)
+
       override def andThen[A, B](ma: OptionT[F, A], fab: A => OptionT[F, B]): OptionT[F, B] = {
         OptionT {
           ma.runOptionT >>= {
