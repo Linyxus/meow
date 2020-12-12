@@ -2,7 +2,13 @@ package meow.monad
 import meow._
 import Meow._
 
-case class StateT[S, F[_], A](runStateT: S => F[(A, S)])
+case class StateT[S, F[_], A](runStateT: S => F[(A, S)]) {
+  val run: S => F[(A, S)] = runStateT
+
+  def eval(s: S)(implicit functor: Functor[F]): F[A] = runStateT(s) <%| { case (a, _) => a }
+
+  def exec(s: S)(implicit functor: Functor[F]): F[S] = runStateT(s) <%| { case (_, s) => s }
+}
 
 trait StateTFunctions {
   def get[S, F[_]: Monad]: StateT[S, F, S] = StateT { s => (s, s).mreturn[F] }
