@@ -9,7 +9,7 @@ import State._
 
 object OptionTExample extends App {
   val app: OptionT[State[Int, *], Int] =
-    lift(get[Int]) >>= { x => if (x > 0) fail[State[Int, *], Int] else lift(get[Int]) }
+    lift(get[Int]) >>= { x => if (x > 0) fail else lift(get[Int]) }
   println(app.runOptionT.eval(10))
   println(app.runOptionT.eval(-10))
 }
