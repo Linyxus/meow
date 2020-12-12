@@ -37,22 +37,8 @@ trait ParserFunctions extends ParserInstances {
 }
 
 trait ParserInstances {
-  implicit val parserIsFunctor: Functor[Parser] = new Functor[Parser] {
-    override def fmap[A, B](func: A => B, fx: Parser[A]): Parser[B] = Parser { s =>
-      fx.runParser(s) <%| { case (r, x) => (r, func(x)) }
-    }
-  }
-
-  implicit val parserIsApplicaitve: Applicative[Parser] = new Applicative[Parser] {
-    override val functor: Functor[Parser] = implicitly
-
-    override def pureOf[A](x: A): Parser[A] = Parser { s => (s, x) :: Nil }
-
-    override def ap[A, B](mfunc: Parser[A => B], ma: => Parser[A]): Parser[B] = Parser { s1 =>
-      mfunc.runParser(s1) >>= { case (s2, func) =>
-        ma.runParser(s2) <%| { case (s3, x) => (s3, func(x)) }
-      }
-    }
+  def pmap[A, B](func: A => B, fx: Parser[A]): Parser[B] = Parser { s =>
+    fx.runParser(s) <%| { case (r, x) => (r, func(x)) }
   }
 
   def joinParser[A](mma: Parser[Parser[A]]): Parser[A] = Parser { s1 =>
@@ -60,9 +46,9 @@ trait ParserInstances {
   }
 
   implicit val parserIsMonad: Monad[Parser] = new Monad[Parser] {
-    override val applicative: Applicative[Parser] = implicitly
+    override def andThen[A, B](ma: Parser[A], fab: A => Parser[B]): Parser[B] = joinParser(pmap(fab, ma))
 
-    override def andThen[A, B](ma: Parser[A], fab: A => Parser[B]): Parser[B] = joinParser(fab <%> ma)
+    override def pureOf[A](x: A): Parser[A] = Parser { s => List((s, x)) }
   }
 
   implicit val parserIsAlternative: Alternative[Parser] = new Alternative[Parser] {
