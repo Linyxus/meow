@@ -93,3 +93,11 @@ println(pUrl parseOnly "https://example.com.cn")
 // or ...
 println("https://example.com.cn" ~~> pUrl)
 ```
+
+## SParser Monad (Parser Combinator)
+
+`SParser` is also a Monad for parser combinators. The difference between it and `Parser` is that `SParser` is based on
+`StateT` and `Option`, while `Parser` is based on `List`. Generally, `SParser` will have better performance than `Parser`,
+since `Parser` uses a `List` instead of a `LazyList`.
+
+See [Examples](src/main/scala/meow/example/SParserExample.scala).
