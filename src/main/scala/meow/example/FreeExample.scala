@@ -2,9 +2,10 @@ package meow.example
 
 import meow._
 import Meow._
-import meow.monad.{Free, Identity, Join, Pure, State}
+import meow.monad.{Free, Identity, Join, Pure, State, Writer}
 import Free._
 import State._
+import Writer._
 import NaturalTransformation._
 
 object FreeExample extends App {
@@ -38,12 +39,25 @@ object FreeExample extends App {
     }
   }
 
+  val logCommand: Command ~> Writer[List[String], *] = new NaturalTransformation[Command, Writer[List[String], *]] {
+    override def apply[A](fa: Command[A]): Writer[List[String], A] = fa match {
+      case Inc(n) => tell("increment".pure[List]) >> n.pure[Writer[List[String], *]]
+      case Dec(n) => tell("decrement".pure[List]) >> n.pure[Writer[List[String], *]]
+      case Reset(x, n) => tell(s"reset to $x".pure[List]) >> n.pure[Writer[List[String], *]]
+      case Out(f) => tell(s"output".pure[List]) >> f(0).pure[Writer[List[String], *]]
+    }
+  }
+
   val prog1: Free[Command, Int] = Command.inc.liftFree >> Command.inc.liftFree >> Command.output(identity).liftFree
   val app1: State[Int, Int] = prog1.transformMonad(evalCommand)
+  val log1: Writer[List[String], Int] = prog1.transformMonad(logCommand)
   println(app1.eval(0))
+  println(log1.run)
 
   val prog2: Free[Command, Int] = Command.inc.liftFree >> Command.inc.liftFree >>
     Command.reset(0).liftFree >> Command.output(identity).liftFree
   val app2: State[Int, Int] = prog2.transformMonad(evalCommand)
+  val log2: Writer[List[String], Int] = prog2.transformMonad(logCommand)
   println(app2.eval(0))
+  println(log2.run)
 }
