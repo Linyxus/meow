@@ -10,4 +10,10 @@ trait MonoidInstances {
 
     override def mplus(l: List[A], r: List[A]): List[A] = l ++ r
   }
+
+  implicit val stringIsMonoid: Monoid[String] = new Monoid[String] {
+    override def mzero: String = ""
+
+    override def mplus(l: String, r: String): String = l ++ r
+  }
 }
