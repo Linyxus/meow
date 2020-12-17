@@ -2,9 +2,9 @@ package meow.example
 
 import meow._
 import Meow._
-import meow.monad.{Free, Identity, Join, Pure, StateT}
+import meow.monad.{Free, Identity, Join, Pure, State}
 import Free._
-import StateT._
+import State._
 import NaturalTransformation._
 
 object FreeExample extends App {
@@ -29,21 +29,21 @@ object FreeExample extends App {
     }
   }
 
-  val evalCommand: Command ~> StateT[Int, Identity, *] = new NaturalTransformation[Command, StateT[Int, Identity, *]] {
-    override def apply[A](fa: Command[A]): StateT[Int, Identity, A] = fa match {
-      case Inc(n) => modify[Int, Identity](_ + 1) >> n.pure[StateT[Int, Identity, *]]
-      case Dec(n) => modify[Int, Identity](_ - 1) >> n.pure[StateT[Int, Identity, *]]
-      case Reset(x, n) => set[Int, Identity](x) >> n.pure[StateT[Int, Identity, *]]
-      case Out(f) => get[Int, Identity] <%| f
+  val evalCommand: Command ~> State[Int, *] = new NaturalTransformation[Command, State[Int, *]] {
+    override def apply[A](fa: Command[A]): State[Int, A] = fa match {
+      case Inc(n) => modify[Int](_ + 1) >> n.pure[State[Int, *]]
+      case Dec(n) => modify[Int](_ - 1) >> n.pure[State[Int, *]]
+      case Reset(x, n) => set[Int](x) >> n.pure[State[Int, *]]
+      case Out(f) => get[Int] <%| f
     }
   }
 
   val prog1: Free[Command, Int] = Command.inc.liftFree >> Command.inc.liftFree >> Command.output(identity).liftFree
-  val app1: StateT[Int, Identity, Int] = prog1.transformMonad(evalCommand)
-  println(app1.eval(0).runIdentity)
+  val app1: State[Int, Int] = prog1.transformMonad(evalCommand)
+  println(app1.eval(0))
 
   val prog2: Free[Command, Int] = Command.inc.liftFree >> Command.inc.liftFree >>
     Command.reset(0).liftFree >> Command.output(identity).liftFree
-  val app2: StateT[Int, Identity, Int] = prog2.transformMonad(evalCommand)
-  println(app2.eval(0).runIdentity)
+  val app2: State[Int, Int] = prog2.transformMonad(evalCommand)
+  println(app2.eval(0))
 }
