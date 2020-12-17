@@ -1,6 +1,16 @@
 # meow
  A cute little library for Cats.
 
+## What `meow` has
+
+- Structures: Semigroup, Functor, Applicative, Monad, Alternative ...
+- Currying helpers
+- Peano number and a dependently typed list
+- Natural transformations
+- Set isomorphism and monad isomorphism
+- Monads: State, Parser, **Free**
+- Monad Transformers: StateT, ReaderT, OptionT
+
 ## Importing
 
 ```scala
