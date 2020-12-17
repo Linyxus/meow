@@ -11,5 +11,6 @@ object Meow extends CurryFunctions
   with MonadExtraOpInstances
   with AlternativeFunctions
   with Isomorphisms with IsoMonadOpInstances
-  with SemigroupInstances with SemigroupOpInstances
+  with SemigroupOpInstances
+  with MonoidInstances
 
