@@ -1,5 +1,7 @@
 package meow
 
+import meow.syntax.IsoMonadOpInstances
+
 trait Isomorphisms {
   trait IsoSet[A, B] {
     def to: A => B
@@ -7,6 +9,11 @@ trait Isomorphisms {
   }
 
   type <=>[A, B] = IsoSet[A, B]
+
+  trait IsoMonad[F[_], G[_]] {
+    def to[A]: F[A] => G[A]
+    def from[A]: G[A] => F[A]
+  }
 }
 
-object Isomorphisms extends Isomorphisms
+object Isomorphisms extends Isomorphisms with IsoMonadOpInstances

@@ -10,4 +10,5 @@ object Meow extends CurryFunctions
   with MonadReturnOpInstances
   with MonadExtraOpInstances
   with AlternativeFunctions
+  with Isomorphisms with IsoMonadOpInstances
 
