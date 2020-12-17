@@ -3,7 +3,11 @@ package meow.monad
 import meow._
 import Meow._
 
-case class WriterT[W : Monoid, F[_] : Monad, A](runWriterT: F[(A, W)])
+case class WriterT[W : Monoid, F[_] : Monad, A](runWriterT: F[(A, W)]) {
+  lazy val run: F[(A, W)] = runWriterT
+  lazy val eval: F[A] = run <%| (_._1)
+  lazy val exec: F[W] = run <%| (_._2)
+}
 
 trait WriterTFunctions extends WriterTInstances {
   def writer[W : Monoid, F[_] : Monad, A](aw: (A, W)): WriterT[W, F, A] = WriterT { aw.pure[F] }
@@ -31,3 +35,5 @@ trait WriterTInstances {
       WriterT { (x, implicitly[Monoid[W]].mzero).mreturn[F] }
   }
 }
+
+object WriterT extends WriterTFunctions with WriterTInstances
