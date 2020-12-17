@@ -1,7 +1,7 @@
 # meow
  A cute little library for Cats.
 
-## What `meow` has
+## What `meow` has (currently)
 
 - Structures: Semigroup, Functor, Applicative, Monad, Alternative ...
 - Currying helpers
