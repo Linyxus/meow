@@ -28,4 +28,11 @@ trait MonadInstances {
 
     override def pureOf[A](x: A): Either[E, A] = Right(x)
   }
+
+  implicit def functionIsMonad[C]: Monad[C => *] = new Monad[Function[C, *]] {
+    override def andThen[A, B](ma: Function[C, A], fab: A => Function[C, B]): Function[C, B] =
+      c => fab(ma(c))(c)
+
+    override def pureOf[A](x: A): Function[C, A] = _ => x
+  }
 }
