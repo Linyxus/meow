@@ -3,7 +3,7 @@
 
 ## What `meow` has (currently)
 
-- Structures: Semigroup, Functor, Applicative, Monad, Alternative ...
+- Structures: Arrow, Semigroup, Monoid, Functor, Applicative, Monad, Alternative ...
 - Currying helpers
 - Peano number and a dependently typed list
 - Natural transformations
@@ -111,3 +111,13 @@ println("https://example.com.cn" ~~> pUrl)
 since `Parser` uses a `List` instead of a `LazyList`.
 
 See [Examples](src/main/scala/meow/example/SParserExample.scala).
+
+## Credits
+
+- [cats](https://github.com/typelevel/cats)
+- [scalaz](https://github.com/scalaz/scalaz)
+
+## References
+
+- Lazy Functional State Threads
+
