@@ -15,4 +15,5 @@ object Meow extends CurryFunctions
   with MonoidInstances
   with ArrowInstances
   with ArrowOpInstances with ArrowExtraOpInstances with ToArrowOpInstances
+  with KleisliInstances
 
