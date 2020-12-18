@@ -112,12 +112,8 @@ since `Parser` uses a `List` instead of a `LazyList`.
 
 See [Examples](src/main/scala/meow/example/SParserExample.scala).
 
-## Credits
+## References
 
 - [cats](https://github.com/typelevel/cats)
 - [scalaz](https://github.com/scalaz/scalaz)
-
-## References
-
 - Lazy Functional State Threads
-
