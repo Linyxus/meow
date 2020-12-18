@@ -13,4 +13,6 @@ object Meow extends CurryFunctions
   with Isomorphisms with IsoMonadOpInstances
   with SemigroupOpInstances
   with MonoidInstances
+  with ArrowInstances
+  with ArrowOpInstances with ArrowExtraOpInstances with ToArrowOpInstances
 
