@@ -63,6 +63,35 @@ object FinalExample extends App {
     }
   }
 
+  trait FlattenCtx[+A]
+  case object NonLCA extends FlattenCtx[Nothing]
+  case class LCA[E](e: E) extends FlattenCtx[E]
+
+  implicit def expCanFlatten[A : ExpSymb]: ExpSymb[FlattenCtx[A] => A] = new ExpSymb[FlattenCtx[A] => A] {
+    val fa: ExpSymb[A] = implicitly
+
+    override def lit(i: Int): FlattenCtx[A] => A = {
+      case NonLCA => fa.lit(i)
+      case LCA(e) => fa.add(fa.lit(i), e)
+    }
+
+    override def neg(a: FlattenCtx[A] => A): FlattenCtx[A] => A = {
+      case NonLCA => fa.neg(a(NonLCA))
+      case LCA(e) => fa.add(fa.neg(a(NonLCA)), e)
+    }
+
+    override def add(a: FlattenCtx[A] => A, b: FlattenCtx[A] => A): FlattenCtx[A] => A = ctx => a(LCA(b(ctx)))
+
+    override def mul(a: FlattenCtx[A] => A, b: FlattenCtx[A] => A): FlattenCtx[A] => A = ???
+  }
+
+  val flatten: ForallBounded[ExpSymb] => ForallBounded[ExpSymb] = x => new ForallBounded[ExpSymb] {
+    override def apply[A: ExpSymb]: A = {
+      val func = x.apply[FlattenCtx[A] => A]
+      func(NonLCA)
+    }
+  }
+
   val prog1: ForallBounded[ExpSymb] = new ForallBounded[ExpSymb] {
     override def apply[A: ExpSymb]: A = {
       val f: ExpSymb[A] = implicitly
@@ -100,4 +129,9 @@ object FinalExample extends App {
   val prog4: ExpProg = pushNeg(prog3)
   println(view(prog3))
   println(view(prog4))
+
+  val prog5: ExpProg = add(add(lit(1), lit(2)), add(lit(3), lit(4)))
+  val prog6: ExpProg = flatten(prog5)
+  println(view(prog5))
+  println(view(prog6))
 }
